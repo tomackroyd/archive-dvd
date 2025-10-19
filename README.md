@@ -11,19 +11,26 @@ Install Homebrew by running:
 
 Then:
 `brew install ffmpeg`
+
 `brew install MakeMKV`
+
 `brew install jq`
+
 `brew install exiftool`
+
 `brew install mediainfo`
+
 `brew install IINA`
+
 `brew install amiaopensource/amiaos`
+
 
 Also install Invisor from the App store
 run `brew cleanup` and `brew doctor`
 
 Add `/opt/homebrew/bin` to the new User’s PATH by running `"export PATH="/opt/homebrew/bin:$PATH"`
 
-Run `which ffmpeg`, and  `which jq` to check path is /usr/local/bin
+Run `which ffmpeg` and  `which jq` to check path is `/usr/local/bin`
 
 Test the script for access to all applications, especially jq
 Copy the path of the .zsh script and run `chmod +x <path>`
