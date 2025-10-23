@@ -237,6 +237,7 @@ while true; do
     3) create_files_from_iso "false" ;;
     4) create_access_files_only ;;
     5)
+
 # ---- Move the trace/log file to the output directory on exit ----
 if [[ -n "$out_dir" && -d "$out_dir" && -n "$LOGFILE" && -f "$LOGFILE" ]]; then
     log_basename="${output_dir_name:-trace}-RF.log"
