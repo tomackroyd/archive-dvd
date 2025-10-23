@@ -154,7 +154,7 @@ for mkv_file in "$out_dir"/*.mkv; do
     echo "WARNING: Could not extract title number from $filename. Skipping."
     continue
   fi
-  # Increment by 1, preserving leading zeros
+  # Increment by 2, preserving leading zeros, leaving the .iso filename to be appended with -PM01 manually
   new_num=$(printf "%02d" $((10#$orig_num + 2)))
   new_mkv="$out_dir/${output_dir_name}-PM${new_num}.mkv"
   echo "Renaming $mkv_file to $new_mkv"
