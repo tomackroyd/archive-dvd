@@ -11,12 +11,19 @@ Install Homebrew by running:
 
 Then:
 `brew install ffmpeg`
-`brew install ddresuc`
+
+`brew install ddrescue`
+
 `brew install MakeMKV`
+
 `brew install jq`
+
 `brew install exiftool`
+
 `brew install mediainfo`
+
 `brew install IINA`
+
 `brew install amiaopensource/amiaos`
 
 Also install Invisor from the App store
