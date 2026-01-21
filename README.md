@@ -1,6 +1,6 @@
 On an appropriate macOS computer, create a new user account with admin privileges, and log in to that account.
 
-Open the script at https://github.com/tomackroyd/archive-dvd/blob/main/ARCHIVE%20DVD-VIDEO.zsh
+Open the script at https://github.com/tomackroyd/archive-dvd/blob/ddrescue/ARCHIVE%20DVD-VIDEO_ddrescue.zsh
 You will need Tom to log in to this Github account.
 
 Copy and paste the contents into a text file and save locally as ARCHIVE-DVD-VIDEO-STAFF.zsh
