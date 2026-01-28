@@ -26,13 +26,15 @@ A shell script for creating preservation-quality archival copies of DVD-VIDEO di
 - **makemkvcon** - DVD title extraction
 - **diskutil** - Disk management (included with macOS)
 
-### Optional Software
-- **jq** - Faster JSON parsing (recommended)
-- **drutil** - Disc ejection (included with macOS)
-- **exiftool** and **mediainfo** - for examining metadata
-- **mediainfo** - Useful for examining metadata
-- **IINA** and **VLC** - for MKV viewing
-- **The AMIA Open Source "amiaos" tap** 
+### Recommended Archival Tools
+These tools are not required for the script to run, but are essential for a complete archival workflow:
+
+- **jq** - Faster JSON parsing (recommended for script)
+- **exiftool** - Extract and analyze file metadata
+- **mediainfo** - Display technical metadata about media files
+- **IINA** - Modern video player for verification (or VLC)
+- **amiaos** - AMIA Open Source archival tool suite
+- **Invisor** - ISO file inspection (Mac App Store) 
 
 
 ## Installation
@@ -43,13 +45,34 @@ A shell script for creating preservation-quality archival copies of DVD-VIDEO di
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### 2. Install Dependencies
+### 2. Install Required Dependencies
 
 ```bash
 brew install ffmpeg ddrescue makemkv jq
 ```
 
-### 3. Configure PATH
+### 3. Install Archival Tools (Recommended)
+
+These tools support a complete archival workflow:
+
+```bash
+# Install archival utilities
+brew install exiftool mediainfo
+
+# Install AMIA Open Source tools
+brew install amiaopensource/amiaos/amiaos
+
+# Install video player
+brew install iina
+
+# Cleanup
+brew cleanup
+brew doctor
+```
+
+**Invisor** (ISO inspector) must be installed separately from the Mac App Store.
+
+### 4. Configure PATH
 
 Add Homebrew and MakeMKV to your PATH permanently:
 
@@ -67,7 +90,7 @@ echo 'export PATH="/Applications/MakeMKV.app/Contents/MacOS:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-### 4. Download Script
+### 5. Download Script
 
 ```bash
 cd ~/Documents  # or your preferred location
@@ -76,7 +99,7 @@ cd archive-dvd
 chmod +x "ARCHIVE DVD-VIDEO.zsh"
 ```
 
-### 5. Verify Installation
+### 6. Verify Installation
 
 ```bash
 which ffmpeg      # Should show /opt/homebrew/bin/ffmpeg
