@@ -104,9 +104,13 @@ create_iso() {
   fi
 
   echo "Detected DVD size: $dvd_size_bytes bytes"
+
+  # Add 5% safety margin to prevent truncation if OS-reported size is slightly low
+  dvd_size_with_margin=$(( dvd_size_bytes + (dvd_size_bytes / 20) ))
+  echo "Using size with 5% safety margin: $dvd_size_with_margin bytes"
   echo "Copying DVD to $iso_path. This may take a while..."
 
-  if ! sudo ddrescue -r3 -s "$dvd_size_bytes" "/dev/$dvd_raw_dev" "$iso_path" "$iso_path.log"; then
+  if ! sudo ddrescue -r3 -s "$dvd_size_with_margin" "/dev/$dvd_raw_dev" "$iso_path" "$iso_path.log"; then
     echo "ERROR: ddrescue failed. Check $iso_path.log for details."
     return 1
   fi
