@@ -324,7 +324,7 @@ The script automatically detects field order and applies appropriate processing:
 
 | Field Order | Action | FFmpeg Filter |
 |-------------|--------|---------------|
-| Progressive | None | `bwdif` |
+| Progressive | None | Direct encode (no deinterlacing) |
 | Top Field First (TFF) | Bob deinterlace | `bwdif=mode=send_field:parity=tff:deint=all` |
 | Bottom Field First (BFF) | Bob deinterlace | `bwdif=mode=send_field:parity=bff:deint=all` |
 | Unknown/Empty | Bob deinterlace | `bwdif=mode=send_field:parity=tff:deint=all` |
