@@ -1,6 +1,6 @@
-# ARCHIVE DVD-VIDEO
+# ARCHIVE-DVD-VIDEO
 
-Shell scripts for creating preservation-quality archival copies of DVD-VIDEO discs on macOS. Creates ISO disk images, extracts video titles to MKV format (preservation masters), and generates access MP4 files with blend deinterlacing. Optional mezzanine ProRes 422 creation for broadcast workflows.
+Shell scripts for creating preservation-quality archival copies of DVD-VIDEO discs on macOS. Creates ISO disk images, extracts video titles to MKV format (preservation masters), and generates access MP4 files with bob deinterlacing. Optional mezzanine ProRes 422 creation for broadcast workflows, and version with blend-deinterlacing.
 
 ## Features
 
@@ -8,7 +8,7 @@ Shell scripts for creating preservation-quality archival copies of DVD-VIDEO dis
 - **MKV Extraction**: Extracts all titles ≥15 seconds using MakeMKV
 - **Access Files**: Generates MP4 files with automatic field order detection
 - **Mezzanine Files**: Optional ProRes 422 creation for broadcast/editing workflows (see MEZZANINE variant)
-- **Blend Deinterlacing**: Uses `bwdif=mode=send_frame` to preserve original frame rate
+- **Bob Deinterlacing**: Uses `bwdif=mode=send_field` to preserve original temporal resolution
 - **Error Recovery**: Comprehensive error handling and logging throughout
 - **Smart Naming**: Automatic file renaming from MakeMKV format to PM (Preservation Master) format
 
@@ -115,34 +115,34 @@ which makemkvcon  # Should show /Applications/MakeMKV.app/Contents/MacOS/makemkv
 
 This repository includes two script variants:
 
-- **`ARCHIVE DVD-VIDEO_HOME.zsh`** - Bob deinterlacing (doubles frame rate to 60fps)
-- **`ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh`** - Bob deinterlacing + optional ProRes 422 mezzanine files
+- **`ARCHIVE-DVD-VIDEO.zsh`** - Bob deinterlacing (doubles frame rate to 60fps)
+- **`ARCHIVE-DVD-VIDEO-MEZZANINE.zsh`** - Bob deinterlacing + optional ProRes 422 mezzanine files
 
 ### Quick Start
 
 **Standard workflow (access files only):**
 ```bash
 cd ~/Documents/archive-dvd
-zsh "ARCHIVE DVD-VIDEO_HOME.zsh"
+zsh "ARCHIVE-DVD-VIDEO.zsh"
 ```
 
 **With mezzanine ProRes creation:**
 ```bash
 cd ~/Documents/archive-dvd
-zsh "ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh"
+zsh "ARCHIVE-DVD-VIDEO-MEZZANINE.zsh"
 ```
 
 Both scripts present an interactive menu with options for your workflow.
 
 ### Which Script Should I Use?
 
-**Use `ARCHIVE DVD-VIDEO_HOME.zsh` if:**
+**Use `ARCHIVE-DVD-VIDEO.zsh` if:**
 - You only need preservation MKVs and access MP4s
 - Files will be used for web streaming or general viewing
 - Storage space is a concern
 - You don't need broadcast-quality intermediates
 
-**Use `ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh` if:**
+**Use `ARCHIVE-DVD-VIDEO-MEZZANINE.zsh` if:**
 - You need files for broadcast delivery
 - Content will be edited in professional NLEs (Premiere, Final Cut, DaVinci Resolve)
 - You need 10-bit color depth for color grading
@@ -289,7 +289,7 @@ Safely exits script and moves log file to output directory (if available).
 
 ### Mezzanine ProRes 422 Encoding
 
-**Available in**: `ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh`
+**Available in**: `ARCHIVE-DVD-VIDEO-MEZZANINE.zsh`
 
 The mezzanine script creates broadcast-quality ProRes 422 files suitable for editing and further production work:
 
@@ -298,7 +298,7 @@ The mezzanine script creates broadcast-quality ProRes 422 files suitable for edi
 - Color: 10-bit 4:2:2 YUV (yuv422p10le)
 - Interlacing: Preserved from source with proper field order flags
 - Aspect Ratio: Automatically preserved from source MKV
-- Frame Rate: Matches source (typically 29.97fps NTSC)
+- Frame Rate: Matches source (typically 576i50)
 
 **Audio:**
 - Codec: PCM 16-bit signed little-endian (pcm_s16le)
@@ -324,15 +324,13 @@ The script automatically detects field order and applies appropriate processing:
 | Field Order | Action | FFmpeg Filter |
 |-------------|--------|---------------|
 | Progressive | None | Direct encode (no deinterlacing) |
-| Top Field First (TFF) | Blend deinterlace | `bwdif=mode=send_frame:parity=tff:deint=all` |
-| Bottom Field First (BFF) | Blend deinterlace | `bwdif=mode=send_frame:parity=bff:deint=all` |
-| Unknown/Empty | Blend deinterlace | `bwdif=mode=send_frame:parity=tff:deint=all` |
+| Top Field First (TFF) | Bob deinterlace | `bwdif=mode=send_field:parity=tff:deint=all` |
+| Bottom Field First (BFF) | Bob deinterlace | `bwdif=mode=send_field:parity=bff:deint=all` |
+| Unknown/Empty | Bob deinterlace | `bwdif=mode=send_field:parity=tff:deint=all` |
 
-**Blend deinterlacing** (`send_frame` mode):
-- Preserves original frame rate (30fps stays 30fps)
-- Blends fields together for smooth appearance
-- Smaller file sizes than bob deinterlacing
-- Ideal for standard archival access copies
+**Bob deinterlacing** (`send_field` mode):
+- Preserves original temproal resolution (25fps interlaced becomes 50fps progressive)
+- Ideal for standard archival access copies that reflect source temproal resolution
 
 ### Access File Encoding
 
@@ -376,7 +374,7 @@ This ensures complete capture while maintaining progress reporting.
 
 ### Error Recovery
 
-**DDrescue** (not `dd`) provides:
+**DDrescue** provides:
 - 3 retry passes on read errors (`-r3`)
 - Continues on errors instead of aborting
 - Detailed log files showing bad sectors
@@ -512,24 +510,22 @@ which makemkvcon
 - ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh (with ProRes mezzanine)
 
 **Deinterlacing**: Bob (send_field mode, doubles frame rate)
-**Frame Rate**: 60fps output from 30fps interlaced source
+**Frame Rate**: 50fps output from 25fps interlaced source
 **Dependencies**: ffmpeg, ddrescue, makemkvcon
 **Platform**: macOS 10.15+
 
 ## Script Variants
 
-### ARCHIVE DVD-VIDEO_HOME.zsh
+### ARCHIVE-DVD-VIDEO-BLEND.zsh
 **Standard workflow script**
 - ISO creation, MKV extraction, access MP4 generation
-- Bob deinterlacing (60fps output from 30fps interlaced)
-- Smaller access files, wider device compatibility
-- Best for: General archival and web delivery
+- Blend deinterlacing (25fps progressive from 25fps interlaced source)
 
-### ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh
+### ARCHIVE-DVD-VIDEO-MEZZANINE.zsh
 **Broadcast/production workflow script**
 - Everything in standard script PLUS:
 - ProRes 422 mezzanine file creation
-- Preserves interlaced format with proper field order
+- Preserves interlaced format
 - 10-bit 4:2:2 color, 16-bit PCM audio
 - Best for: Broadcast delivery, professional editing, color grading
 
