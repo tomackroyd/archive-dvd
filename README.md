@@ -324,14 +324,14 @@ The script automatically detects field order and applies appropriate processing:
 
 | Field Order | Action | FFmpeg Filter |
 |-------------|--------|---------------|
-| Progressive | None | Direct encode (no deinterlacing) |
+| Progressive | None | `bwdif` |
 | Top Field First (TFF) | Bob deinterlace | `bwdif=mode=send_field:parity=tff:deint=all` |
 | Bottom Field First (BFF) | Bob deinterlace | `bwdif=mode=send_field:parity=bff:deint=all` |
 | Unknown/Empty | Bob deinterlace | `bwdif=mode=send_field:parity=tff:deint=all` |
 
 **Bob deinterlacing** (`send_field` mode):
-- Preserves original temproal resolution (25fps interlaced becomes 50fps progressive)
-- Ideal for standard archival access copies that reflect source temproal resolution
+- Preserves original temporal resolution (25fps interlaced becomes 50fps progressive)
+- Ideal for standard archival access copies that reflect source temporal resolution
 
 ### Access File Encoding
 
