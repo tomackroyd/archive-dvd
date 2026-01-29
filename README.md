@@ -1,12 +1,13 @@
 # ARCHIVE DVD-VIDEO
 
-A shell script for creating preservation-quality archival copies of DVD-VIDEO discs on macOS. Creates ISO disk images, extracts video titles to MKV format (preservation masters), and generates access MP4 files with blend deinterlacing.
+Shell scripts for creating preservation-quality archival copies of DVD-VIDEO discs on macOS. Creates ISO disk images, extracts video titles to MKV format (preservation masters), and generates access MP4 files with blend deinterlacing. Optional mezzanine ProRes 422 creation for broadcast workflows.
 
 ## Features
 
 - **ISO Creation**: Uses ddrescue with 5% safety margin for reliable disk imaging
 - **MKV Extraction**: Extracts all titles ≥15 seconds using MakeMKV
 - **Access Files**: Generates MP4 files with automatic field order detection
+- **Mezzanine Files**: Optional ProRes 422 creation for broadcast/editing workflows (see MEZZANINE variant)
 - **Blend Deinterlacing**: Uses `bwdif=mode=send_frame` to preserve original frame rate
 - **Error Recovery**: Comprehensive error handling and logging throughout
 - **Smart Naming**: Automatic file renaming from MakeMKV format to PM (Preservation Master) format
@@ -90,13 +91,14 @@ echo 'export PATH="/Applications/MakeMKV.app/Contents/MacOS:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-### 5. Download Script
+### 5. Download Scripts
 
 ```bash
 cd ~/Documents  # or your preferred location
 git clone https://github.com/tomackroyd/archive-dvd.git
 cd archive-dvd
-chmod +x "ARCHIVE DVD-VIDEO.zsh"
+chmod +x "ARCHIVE DVD-VIDEO_HOME.zsh"
+chmod +x "ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh"
 ```
 
 ### 6. Verify Installation
@@ -109,14 +111,45 @@ which makemkvcon  # Should show /Applications/MakeMKV.app/Contents/MacOS/makemkv
 
 ## Usage
 
+### Script Selection
+
+This repository includes two script variants:
+
+- **`ARCHIVE DVD-VIDEO_HOME.zsh`** - Bob deinterlacing (doubles frame rate to 60fps)
+- **`ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh`** - Bob deinterlacing + optional ProRes 422 mezzanine files
+
 ### Quick Start
 
+**Standard workflow (access files only):**
 ```bash
 cd ~/Documents/archive-dvd
-zsh "ARCHIVE DVD-VIDEO.zsh"
+zsh "ARCHIVE DVD-VIDEO_HOME.zsh"
 ```
 
-The script presents an interactive menu with 5 options.
+**With mezzanine ProRes creation:**
+```bash
+cd ~/Documents/archive-dvd
+zsh "ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh"
+```
+
+Both scripts present an interactive menu with options for your workflow.
+
+### Which Script Should I Use?
+
+**Use `ARCHIVE DVD-VIDEO_HOME.zsh` if:**
+- You only need preservation MKVs and access MP4s
+- Files will be used for web streaming or general viewing
+- Storage space is a concern
+- You don't need broadcast-quality intermediates
+
+**Use `ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh` if:**
+- You need files for broadcast delivery
+- Content will be edited in professional NLEs (Premiere, Final Cut, DaVinci Resolve)
+- You need 10-bit color depth for color grading
+- You want to preserve interlaced format for broadcast standards
+- You need frame-accurate editing capabilities
+
+**Note:** Both scripts create identical MKV preservation masters. The only difference is the optional ProRes mezzanine creation.
 
 ### Menu Options
 
@@ -229,6 +262,13 @@ Safely exits script and moves log file to output directory (if available).
 - **PM** = Preservation Master
 - Numbers start at 01 (MakeMKV title 0 becomes PM01)
 
+### Mezzanine Files (MOV)
+- **Format**: `IDENTIFIER-MZ##.mov`
+- **Example**: `CA0001234567-MZ01.mov`
+- **MZ** = Mezzanine (ProRes 422)
+- Numbers match corresponding PM file
+- Only created when using MEZZANINE script variant
+
 ### Access Files (MP4)
 - **Format**: `IDENTIFIER-A##.mp4`
 - **Example**: `CA0001234567-A01.mp4`
@@ -246,6 +286,36 @@ Safely exits script and moves log file to output directory (if available).
 - **Log**: `IDENTIFIER.iso.log` (ddrescue error log)
 
 ## Technical Details
+
+### Mezzanine ProRes 422 Encoding
+
+**Available in**: `ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh`
+
+The mezzanine script creates broadcast-quality ProRes 422 files suitable for editing and further production work:
+
+**Video:**
+- Codec: ProRes 422 "vanilla" (profile 2, not LT or HQ)
+- Color: 10-bit 4:2:2 YUV (yuv422p10le)
+- Interlacing: Preserved from source with proper field order flags
+- Aspect Ratio: Automatically preserved from source MKV
+- Frame Rate: Matches source (typically 29.97fps NTSC)
+
+**Audio:**
+- Codec: PCM 16-bit signed little-endian (pcm_s16le)
+- Sample Rate: 48 kHz (matching DVD source)
+- Channels: Stereo (2.0)
+- Bitrate: 1536 kbps uncompressed
+
+**Why ProRes 422?**
+- Industry-standard broadcast intermediate codec
+- Excellent quality-to-file-size ratio
+- Frame-accurate editing in professional NLEs
+- Preserves interlaced format for proper broadcast output
+- 10-bit color depth maintains quality through color grading
+
+**File Sizes:**
+- Approximately 30-40 MB/minute for NTSC DVD content
+- Roughly 10x larger than access MP4, 3x smaller than uncompressed
 
 ### Deinterlacing Strategy
 
@@ -345,14 +415,22 @@ Check the `.iso.log` file after imaging for any read errors.
 
 **Preservation Masters (MKV)**:
 - Store on redundant storage (RAID, cloud backup)
-- Never delete after creating access copies
+- Never delete after creating derivatives
 - Consider LTO tape for long-term archival
 - These are your master copies
+
+**Mezzanine Files (ProRes MOV)**:
+- Optional broadcast/editing intermediates
+- Higher storage priority than access copies
+- Easier to work with than MKVs in professional NLEs
+- Can be regenerated from MKV if needed
+- Typical use: short-term production work
 
 **Access Copies (MP4)**:
 - Suitable for streaming servers and general use
 - Can be regenerated from MKV if lost
 - Lower storage priority than masters
+- Delete and regenerate if quality standards change
 
 **ISOs**:
 - Can delete after successful MKV extraction
@@ -429,16 +507,35 @@ which makemkvcon
 
 ## Version Information
 
-**Script**: ARCHIVE DVD-VIDEO.zsh
-**Deinterlacing**: Blend (send_frame mode)
-**Frame Rate**: Preserves original
+**Scripts**:
+- ARCHIVE DVD-VIDEO_HOME.zsh (standard)
+- ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh (with ProRes mezzanine)
+
+**Deinterlacing**: Bob (send_field mode, doubles frame rate)
+**Frame Rate**: 60fps output from 30fps interlaced source
 **Dependencies**: ffmpeg, ddrescue, makemkvcon
 **Platform**: macOS 10.15+
 
-## Related Scripts
+## Script Variants
 
-- **ARCHIVE DVD-VIDEO_HOME.zsh** - Uses bob deinterlacing (doubles frame rate)
-- See repository for other variants
+### ARCHIVE DVD-VIDEO_HOME.zsh
+**Standard workflow script**
+- ISO creation, MKV extraction, access MP4 generation
+- Bob deinterlacing (60fps output from 30fps interlaced)
+- Smaller access files, wider device compatibility
+- Best for: General archival and web delivery
+
+### ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh
+**Broadcast/production workflow script**
+- Everything in standard script PLUS:
+- ProRes 422 mezzanine file creation
+- Preserves interlaced format with proper field order
+- 10-bit 4:2:2 color, 16-bit PCM audio
+- Best for: Broadcast delivery, professional editing, color grading
+
+**Menu differences:**
+- Standard: 5 options (no mezzanine)
+- Mezzanine: 6 options including "Create archival MKV, mezzanine ProRes 422 and access MP4 files"
 
 ## License
 
