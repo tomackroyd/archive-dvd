@@ -97,8 +97,8 @@ source ~/.zshrc
 cd ~/Documents  # or your preferred location
 git clone https://github.com/tomackroyd/archive-dvd.git
 cd archive-dvd
-chmod +x "ARCHIVE DVD-VIDEO_HOME.zsh"
-chmod +x "ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh"
+chmod +x "ARCHIVE-DVD-VIDEO.zsh"
+chmod +x "ARCHIVE-DVD-VIDEO-MEZZANINE.zsh"
 ```
 
 ### 6. Verify Installation
@@ -500,15 +500,13 @@ which makemkvcon
 ### Access files look choppy
 
 **Solution:**
-1. Check if blend deinterlacing is appropriate for your content
-2. For sports/action, consider using ARCHIVE DVD-VIDEO_HOME.zsh (bob deinterlacing)
-3. Progressive content needs no deinterlacing
+Check if blend deinterlacing is more appropriate for your content and use ARCHIVE-DVD-VIDEO-BLEND.zsh
 
 ## Version Information
 
 **Scripts**:
-- ARCHIVE DVD-VIDEO_HOME.zsh (standard)
-- ARCHIVE DVD-VIDEO_HOME_MEZZANINE.zsh (with ProRes mezzanine)
+- ARCHIVE-DVD-VIDEO.zsh (standard)
+- ARCHIVE-DVD-VIDEO-MEZZANINE.zsh (with ProRes mezzanine)
 
 **Deinterlacing**: Bob (send_field mode, doubles frame rate)
 **Frame Rate**: 50fps output from 25fps interlaced source
